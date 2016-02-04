@@ -1,0 +1,53 @@
+//This processes a new Transaction (creating a new one beforehand shouldn't be necessary).
+<?php
+	
+$DEVICE_ID = "144048e9-613a-cd2b-a5f8-89061b374e8b";
+$DEVICE_PASSWORD = "password1";
+$GATEWAY_ID = 'AuthorizeNetTest';
+$CUSTOMER = 'John Smith';
+	
+	$card = Array(
+		'Account' => '4111111111111111',
+		'ExpDate' => '0120',
+		'CardHolder' => array(
+			'FirstName' => 'John',
+			'LastName' => 'Smith'),
+		'Customer' => $CUSTOMER);
+	                                                 
+	$transaction = Array(
+	        "Amount" => "13.37",
+	        "Customer" => $CUSTOMER, // Customer ID
+	        "Currency" => "USD",
+	        "SetupId" => $GATEWAY_ID, // Payment Gateway name
+	        "Tender" => "CreditCard",
+	        "Type" => "Sale",
+           //"Key" => "160203020487",
+	        "Card" => $card);
+	// Convert the data to JSON.
+	$json = json_encode($transaction, TRUE);
+	// Setup the HTTP request.
+	$httpUrl = "https://sandbox.payfabric.com/v2/rest/api/transaction/process";
+	$httpHeader = Array(
+	        "Content-Type: application/json",
+	        sprintf("authorization: %s|%s", $DEVICE_ID, $DEVICE_PASSWORD));        
+	$curlOptions = Array(CURLOPT_RETURNTRANSFER => TRUE,
+	        CURLOPT_VERBOSE => TRUE,
+	        CURLOPT_POSTFIELDS => $json,
+	        CURLOPT_HTTPHEADER => $httpHeader);
+	// Execute the HTTP request.
+	$curlHandle = curl_init($httpUrl);
+	curl_setopt_array($curlHandle, $curlOptions);
+	$httpResponseBody = curl_exec($curlHandle);
+	$httpResponseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+	curl_close($curlHandle);
+	if ($httpResponseCode >= 300) {
+	    // Handle errors.
+	}          
+	print_r($httpResponseCode);
+	print_r($httpResponseBody);
+	// Convert the JSON into a multi-dimensional array.
+	$responseArray = json_decode($httpResponseBody, TRUE);
+	// Output the results of the request.
+	var_dump($httpResponseBody);
+	print_r($responseArray);
+?>
