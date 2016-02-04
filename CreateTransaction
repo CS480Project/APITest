@@ -1,3 +1,4 @@
+//This creates a new Transaction and should return a new Transaction key.
 <?php
 
 const DEVICE_ID = "144048e9-613a-cd2b-a5f8-89061b374e8b";
